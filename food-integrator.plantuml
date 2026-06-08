@@ -1,0 +1,70 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class Dish {
+  + Dish(String, BigDecimal): 
+  - price: BigDecimal
+  - name: String
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+   name: String
+   price: BigDecimal
+}
+class FoodController {
+  + FoodController(FoodService): 
+  + index(String, BigDecimal, Model): String
+}
+class FoodIntegratorApplication {
+  + FoodIntegratorApplication(): 
+  + main(String[]): void
+}
+class FoodIntegratorApplicationTests {
+  ~ FoodIntegratorApplicationTests(): 
+  ~ contextLoads(): void
+}
+interface FoodService << interface >> {
+  + search(String, BigDecimal): List<SearchResultDto>
+}
+class FoodServiceImpl {
+  + FoodServiceImpl(): 
+  + search(String, BigDecimal): List<SearchResultDto>
+}
+class Restaurant {
+  + Restaurant(String, int, List<Dish>): 
+  - menu: List<Dish>
+  - name: String
+  - deliveryTime: int
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+   name: String
+   menu: List<Dish>
+   deliveryTime: int
+}
+class SearchResultDto {
+  + SearchResultDto(String, int, String, BigDecimal): 
+  - dishPrice: BigDecimal
+  - deliveryTime: int
+  - restaurantName: String
+  - dishName: String
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+   dishPrice: BigDecimal
+   dishName: String
+   deliveryTime: int
+   restaurantName: String
+}
+
+FoodController                 "1" *-[#595959,plain]-> "foodService\n1" FoodService                    
+FoodServiceImpl                 -[#008200,dashed]-^  FoodService                    
+FoodServiceImpl                "1" *-[#595959,plain]-> "database\n*" Restaurant                     
+Restaurant                     "1" *-[#595959,plain]-> "menu\n*" Dish                           
+@enduml

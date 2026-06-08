@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodIntegrator — Поиск лучшей цены</title>
+    <link href="jsdelivr.net" rel="stylesheet">
+    <link href="cloudflare.com" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .search-card {
+            background: linear-gradient(135deg, #667eea 0%, #b02f62 100%);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .food-card {
+            border: none;
+            border-radius: 12px;
+            transition: transform 0.5s, box-shadow 0.5s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .food-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .price-badge {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #2dc937;
+        }
+
+        .btn-search {
+            background-color: #ff9900;
+            border: none;
+            color: white;
+            font-weight: 600;
+        }
+
+        .btn-search:hover {
+            background-color: #e68a00;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+    <!-- Шапка сервиса -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-dark"><i class="fa-solid fa-utensils text-warning me-3"></i>FoodIntegrator
+        </h1>
+        <p class="lead text-muted">Сравниваем цены в ресторанах города за 1 секунду</p>
+    </div>
+
+    <!-- панель поиска -->
+    <div class="card search-card p-4 mb-5">
+        <form action="/" method="get" class="row g-3 align-items-center">
+            <div class="col-md-5">
+                <label class="form-label fw-semibold"><i class="fa-solid fa-magnifying-glass me-2"></i>Что вы хотите
+                    съесть?</label>
+                <input type="text" name="query" class="form-control form-control-lg"
+                       placeholder="Пицца, Суши, Бургер..." required th:value="${param.query}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold"><i class="fa-solid fa-wallet me-2"></i>Максимальный бюджет</label>
+                <div class="input-group input-group-lg">
+                    <input type="number" name="maxPrice" class="form-control" placeholder="Например, 600" required
+                           th:value="${param.maxPrice}">
+                    <span class="input-group-text">₽</span>
+                </div>
+            </div>
+            <div class="col-md-3 mt-md-5">
+                <button type="submit" class="btn btn-search btn-lg w-100 py-3">
+                    <i class="fa-solid fa-bolt me-2"></i>Найти выгоду
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Блок результатов -->
+    <div th:if="${results}">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold text-secondary">Лучшие варианты в городе:</h3>
+            <span class="badge bg-secondary py-2 px-3" th:text="'Найдено предложений: ' + ${results.size()}">0</span>
+        </div>
+
+        <!-- Сетка карточек -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <!-- Цикл по нашим DTO результатам -->
+            <div class="col" th:each="item : ${results}">
+                <div class="card h-100 food-card p-3">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h4 class="card-title fw-bold text-dark mb-0" th:text="${item.restaurantName}">
+                                    Ресторан</h4>
+                                <span class="badge bg-light text-dark border"><i
+                                        class="fa-solid fa-star text-warning me-1"></i>4.8</span>
+                            </div>
+                            <h6 class="text-muted mb-3" th:text="${item.dishName}">Название блюда</h6>
+                        </div>
+
+                        <div class="border-top pt-3 mt-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="price-badge" th:text="${item.dishPrice} + ' ₽'">0 ₽</span>
+                                <small class="text-muted"><i class="fa-solid fa-clock text-danger me-1"></i> <span
+                                        th:text="${item.deliveryTime}">0</span> мин</small>
+                            </div>
+                            <!-- Симуляция монетизации -->
+                            <a href="#" class="btn btn-outline-primary btn-sm w-100 mt-3 rounded-pill">
+                                <i class="fa-solid fa-basket-shopping me-2"></i>Заказать со скидкой
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Если список пуст -->
+        <div th:if="${results.isEmpty()}" class="alert alert-custom text-center py-5 bg-white shadow-sm rounded-4 mt-4">
+            <i class="fa-regular fa-face-frown display-1 text-muted mb-3"></i>
+            <h4 class="fw-bold text-dark">Ничего не найдено</h4>
+            <p class="text-muted">Попробуйте увеличить бюджет или изменить поисковый запрос.</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
